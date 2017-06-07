@@ -4,4 +4,6 @@ import Types.Page exposing (Page)
 
 
 type alias Model =
-    { page : Page }
+    { page : Page
+    , postTitles : List String
+    }

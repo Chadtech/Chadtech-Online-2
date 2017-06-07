@@ -1,12 +1,9 @@
 module Main.View exposing (view)
 
-import Html exposing (Html, div, p, text)
-import Html.Attributes exposing (class)
+import Html exposing (Html, div, p, text, a)
+import Html.Attributes exposing (class, classList)
 import Types.Model exposing (Model)
 import Types.Message exposing (Message(..))
-
-
---import Components.Basics exposing (words, field, mainContainer)
 
 
 view : Model -> Html Message
@@ -35,8 +32,21 @@ navBar : Html Message
 navBar =
     div
         [ class "nav-bar" ]
-        []
+        [ navItem "Blog" True
+        , navItem "Resume" False
+        , navItem "Archive" False
+        , navItem "Chadtech Online 0" False
+        , navItem "Twitter" False
+        , navItem "Github" False
+        ]
 
 
-
---Html.text ""
+navItem : String -> Bool -> Html Message
+navItem content isSelected =
+    a
+        [ classList
+            [ ( "nav-item", True )
+            , ( "selected", isSelected )
+            ]
+        ]
+        [ text content ]
