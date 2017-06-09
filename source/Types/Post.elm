@@ -1,8 +1,9 @@
 module Types.Post exposing (..)
 
 import Json.Decode.Pipeline exposing (decode, required, hardcoded)
-import Json.Decode as Decode exposing (Decoder, andThen, succeed)
+import Json.Decode as Decode exposing (Decoder, andThen, succeed, fail)
 import Http exposing (Error)
+import Debug exposing (log)
 
 
 type Message
@@ -28,15 +29,10 @@ type alias Post =
     }
 
 
-type alias Paragraph =
-    { type_ : ParagraphType
-    , content : List String
-    }
-
-
-type ParagraphType
-    = Normal
-    | Logic
+type Paragraph
+    = Normal (List String)
+    | Logic (List String)
+    | Image String
 
 
 type alias Model =
@@ -57,10 +53,7 @@ error =
     { title = "Error"
     , date = "XXXXXXXX"
     , body =
-        [ { type_ = Normal
-          , content =
-                [ "Error loading the post" ]
-          }
+        [ Normal [ "Error loading the post" ]
         ]
     }
 
@@ -79,20 +72,26 @@ decoder =
 
 paragraphDecoder : Decoder Paragraph
 paragraphDecoder =
-    decode Paragraph
-        |> required "type" typeDecoder
-        |> required "content" (Decode.list Decode.string)
+    Decode.field "type" Decode.string
+        |> andThen toParagraph
 
 
-typeDecoder : Decoder ParagraphType
-typeDecoder =
-    Decode.string
-        |> andThen stringToParagraphType
+toParagraph : String -> Decoder Paragraph
+toParagraph type_ =
+    case type_ of
+        "logic" ->
+            getContent Logic (Decode.list Decode.string)
+
+        "normal" ->
+            getContent Normal (Decode.list Decode.string)
+
+        "image" ->
+            getContent Image Decode.string
+
+        _ ->
+            fail "not logic normal or image type paragraph"
 
 
-stringToParagraphType : String -> Decoder ParagraphType
-stringToParagraphType type_ =
-    if type_ == "logic" then
-        succeed Logic
-    else
-        succeed Normal
+getContent : (a -> Paragraph) -> Decoder a -> Decoder Paragraph
+getContent paragraph decoder_ =
+    Decode.map paragraph (Decode.field "content" decoder_)

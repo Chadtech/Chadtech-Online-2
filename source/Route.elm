@@ -7,7 +7,8 @@ import Types.Model exposing (Model(..))
 import Types.Post exposing (PostState(..), PostType(..), empty)
 import Request.Post
 import Request.Config as Config
-import Navigation exposing (Location)
+import Navigation exposing (Location, modifyUrl)
+import Debug exposing (log)
 
 
 route : Parser (Route -> a) a
@@ -20,12 +21,15 @@ route =
 
 set : Maybe Route -> Model -> ( Model, Cmd Message )
 set maybeRoute model =
-    case maybeRoute of
+    case log "ROUTE" maybeRoute of
         Nothing ->
             NotFound ! []
 
         Just (Route.Home) ->
             goHome model
+
+        Just (Route.Archive) ->
+            model ! [ modifyUrl "/archive" ]
 
         _ ->
             model ! []
@@ -50,7 +54,7 @@ goHome model =
                                 , postTitles = titles
                                 }
                     in
-                        ( model, Request.Post.getCmd postNumber )
+                        model ! [ Request.Post.getCmd postNumber, modifyUrl "/" ]
 
         _ ->
             Post empty ! [ Config.getCmd ]
