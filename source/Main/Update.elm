@@ -1,27 +1,23 @@
 module Main.Update exposing (update)
 
-import Types.Model exposing (Model)
+import Types.Model exposing (Model(..))
 import Types.Message exposing (Message(..))
-import Types.Page as Page
 import Route
 import Update.Post as Post
 
 
 update : Message -> Model -> ( Model, Cmd Message )
 update message model =
-    case ( message, model.page ) of
+    case ( message, model ) of
         ( SetRoute route, _ ) ->
             Route.set route model
 
-        ( PostMessage subMessage, Page.Post subModel ) ->
+        ( PostMessage subMessage, Post state ) ->
             let
-                ( newSubModel, cmd ) =
-                    Post.update subMessage subModel
+                ( newState, cmd ) =
+                    Post.update subMessage state
             in
-                { model
-                    | page = Page.Post newSubModel
-                }
-                    ! [ Cmd.map PostMessage cmd ]
+                Post newState ! [ Cmd.map PostMessage cmd ]
 
         _ ->
             model ! []

@@ -2,14 +2,12 @@ module Route exposing (..)
 
 import UrlParser as Url exposing (parseHash, s, int, (</>), oneOf, Parser)
 import Types.Route as Route exposing (Route)
-import Types.Page as Page exposing (Page)
 import Types.Message exposing (Message(..))
-import Types.Model exposing (Model)
-import Types.Post as Post exposing (PostState(..))
+import Types.Model exposing (Model(..))
+import Types.Post exposing (PostState(..), PostType(..), empty)
 import Request.Post
 import Request.Config as Config
 import Navigation exposing (Location)
-import Debug exposing (log)
 
 
 route : Parser (Route -> a) a
@@ -22,31 +20,24 @@ route =
 
 set : Maybe Route -> Model -> ( Model, Cmd Message )
 set maybeRoute model =
-    case log "ROUTE" maybeRoute of
+    case maybeRoute of
         Nothing ->
-            { model
-                | page = Page.NotFound
-            }
-                ! []
+            NotFound ! []
 
         Just (Route.Home) ->
-            let
-                ( page, cmd ) =
-                    goHome model.page
-            in
-                ( { model | page = page }, cmd )
+            goHome model
 
         _ ->
             model ! []
 
 
-goHome : Page -> ( Page, Cmd Message )
-goHome page =
-    case page of
-        Page.Post { postTitles } ->
+goHome : Model -> ( Model, Cmd Message )
+goHome model =
+    case model of
+        Post { postTitles } ->
             case postTitles of
                 [] ->
-                    ( Page.Post Post.empty, Config.getCmd )
+                    ( Post empty, Config.getCmd )
 
                 titles ->
                     let
@@ -54,15 +45,15 @@ goHome page =
                             List.length titles - 1
 
                         model =
-                            Page.Post
-                                { post = Loading (Post.Number postNumber)
+                            Post
+                                { post = Loading (Number postNumber)
                                 , postTitles = titles
                                 }
                     in
                         ( model, Request.Post.getCmd postNumber )
 
         _ ->
-            ( Page.Post Post.empty, Config.getCmd )
+            Post empty ! [ Config.getCmd ]
 
 
 fromLocation : Location -> Maybe Route

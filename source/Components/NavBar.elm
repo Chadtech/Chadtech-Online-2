@@ -3,7 +3,6 @@ module Components.NavBar exposing (view, title)
 import Html exposing (Html, div, p, text, a)
 import Html.Attributes exposing (class, classList)
 import Html.Events exposing (onClick)
-import Types.Model exposing (Model)
 import Types.Message exposing (Message(..))
 import Types.Route exposing (Route(..))
 

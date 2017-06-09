@@ -1,7 +1,10 @@
-module Types.Model exposing (Model)
+module Types.Model exposing (Model(..))
 
-import Types.Page exposing (Page)
+import Types.Post as Post
 
 
-type alias Model =
-    { page : Page }
+type Model
+    = Post Post.Model
+    | Archive
+    | Resume
+    | NotFound

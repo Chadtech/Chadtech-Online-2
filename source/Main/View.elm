@@ -2,9 +2,8 @@ module Main.View exposing (view)
 
 import Html exposing (Html, div, p, text, a)
 import Html.Attributes exposing (class, classList)
-import Types.Model exposing (Model)
+import Types.Model exposing (Model(..))
 import Types.Message exposing (Message(..))
-import Types.Page exposing (Page(..))
 import View.Post as Post
 import Components.NavBar as NavBar
 
@@ -18,7 +17,7 @@ view model =
 
 body : Model -> List (Html Message)
 body model =
-    case model.page of
+    case model of
         Post subModel ->
             Post.view subModel
 

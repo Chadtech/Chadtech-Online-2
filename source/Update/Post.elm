@@ -1,20 +1,19 @@
 module Update.Post exposing (..)
 
 import Http
-import Request.Post as Post
-import Types.Post
+import Request.Post as Request
+import Types.Post as Post
     exposing
         ( Model
         , Message(..)
         , PostType(..)
         , PostState(..)
         )
-import Debug exposing (log)
 
 
 update : Message -> Model -> ( Model, Cmd Message )
 update message model =
-    case log "POST MESSAGE" message of
+    case message of
         ConfigResponse (Ok str) ->
             { model
                 | postTitles =
@@ -27,16 +26,16 @@ update message model =
 
         PostResponse (Ok post) ->
             { model
-                | post = Loaded (log "POST" post)
+                | post = Loaded post
             }
                 ! []
 
         PostResponse (Err err) ->
-            let
-                _ =
-                    log "ERR" err
-            in
-                model ! []
+            { model
+                | post =
+                    Loaded Post.error
+            }
+                ! []
 
         CheckForPost ->
             case model.post of
@@ -50,7 +49,7 @@ update message model =
 load : PostType -> Model -> ( Model, Cmd Message )
 load type_ model =
     loadWhich type_ model
-        |> Post.get
+        |> Request.get
         |> Http.send PostResponse
         |> (,) model
 

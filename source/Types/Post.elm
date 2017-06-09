@@ -3,7 +3,6 @@ module Types.Post exposing (..)
 import Json.Decode.Pipeline exposing (decode, required, hardcoded)
 import Json.Decode as Decode exposing (Decoder, andThen, succeed)
 import Http exposing (Error)
-import Debug exposing (log)
 
 
 type Message
@@ -50,6 +49,19 @@ empty : Model
 empty =
     { post = Loading Home
     , postTitles = []
+    }
+
+
+error : Post
+error =
+    { title = "Error"
+    , date = "XXXXXXXX"
+    , body =
+        [ { type_ = Normal
+          , content =
+                [ "Error loading the post" ]
+          }
+        ]
     }
 
 
