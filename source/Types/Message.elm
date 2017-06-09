@@ -1,12 +1,12 @@
 module Types.Message exposing (Message(..), Handler)
 
 import Types.Route exposing (Route(..))
-import Http exposing (Error)
+import Types.Post as Post
 
 
 type Message
     = SetRoute (Maybe Route)
-    | ConfigResponse (Result Error String)
+    | PostMessage Post.Message
 
 
 type alias Handler a =
