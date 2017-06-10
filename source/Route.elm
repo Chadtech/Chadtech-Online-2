@@ -8,6 +8,8 @@ import Types.Post exposing (PostState(..), PostType(..), empty)
 import Request.Post
 import Request.Config as Config
 import Navigation exposing (Location, modifyUrl)
+import Html.Attributes as Attributes
+import Html exposing (Attribute)
 import Debug exposing (log)
 
 
@@ -29,7 +31,7 @@ set maybeRoute model =
             goHome model
 
         Just (Route.Archive) ->
-            model ! [ modifyUrl "/archive" ]
+            model ! []
 
         _ ->
             model ! []
@@ -58,6 +60,48 @@ goHome model =
 
         _ ->
             Post empty ! [ Config.getCmd ]
+
+
+
+-- INTERNAL --
+
+
+routeToString : Route -> String
+routeToString route =
+    let
+        pieces =
+            case route of
+                Route.Home ->
+                    [ "#/" ]
+
+                Route.Post int ->
+                    [ "#/post", toString int ]
+
+                Route.Archive ->
+                    [ "#/archive" ]
+
+                Route.Resume ->
+                    [ "#/resume" ]
+
+                Route.ChadtechOnline0 ->
+                    [ "http://chadtech.github.io/" ]
+
+                Route.Twitter ->
+                    [ "http://www.twitter.com/theRealChadtech" ]
+
+                Route.Github ->
+                    [ "http://www.github.com/chadtech" ]
+    in
+        String.join "/" pieces
+
+
+
+-- PUBLIC HELPERS --
+
+
+href : Route -> Attribute msg
+href route =
+    Attributes.href (routeToString route)
 
 
 fromLocation : Location -> Maybe Route

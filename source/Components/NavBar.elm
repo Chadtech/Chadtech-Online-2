@@ -2,9 +2,9 @@ module Components.NavBar exposing (view, title)
 
 import Html exposing (Html, div, p, text, a)
 import Html.Attributes exposing (class, classList)
-import Html.Events exposing (onClick)
 import Types.Message exposing (Message(..))
 import Types.Route exposing (Route(..))
+import Route exposing (href)
 
 
 -- NAV BAR
@@ -30,7 +30,7 @@ item content currentPage route =
             [ ( "nav-item", True )
             , ( "selected", content == currentPage )
             ]
-        , onClick (SetRoute (Just route))
+        , href route
         ]
         [ text content ]
 
