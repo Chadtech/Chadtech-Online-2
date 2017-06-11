@@ -7,4 +7,5 @@ type Model
     = Post Post.Model
     | Archive
     | Resume
+    | Blank
     | NotFound

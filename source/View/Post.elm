@@ -2,7 +2,7 @@ module View.Post exposing (view)
 
 import Html exposing (Html, div, p, text, br)
 import Html.Attributes exposing (class, classList)
-import Types.Post exposing (Model, PostState(..), Post, Paragraph(..), error)
+import Types.Post exposing (Model(..), Post, Paragraph(..), error)
 import Types.Message exposing (Message(..))
 import Components.NavBar as NavBar
 import Util exposing ((:=))
@@ -10,12 +10,16 @@ import Util exposing ((:=))
 
 view : Model -> List (Html Message)
 view model =
-    case model.post of
-        Loading _ ->
-            viewPost error
-
-        Loaded post ->
+    case model of
+        HavePost titles post ->
             viewPost post
+
+        _ ->
+            { title = "Loading Post"
+            , date = ""
+            , body = []
+            }
+                |> viewPost
 
 
 viewPost : Post -> List (Html Message)

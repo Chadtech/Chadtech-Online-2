@@ -2,21 +2,16 @@ module Main.Init exposing (model, init)
 
 import Types.Model exposing (Model(..))
 import Types.Message exposing (Message(..))
-import Types.Post exposing (PostType(..), PostState(..))
 import Navigation exposing (Location)
+import Request.Config as Config
 import Route
 
 
 init : Location -> ( Model, Cmd Message )
 init location =
-    Route.set
-        (Route.fromLocation location)
-        model
+    ( Route.set (Route.fromLocation location) model, Cmd.none )
 
 
 model : Model
 model =
-    Post
-        { post = Loading Home
-        , postTitles = []
-        }
+    Blank

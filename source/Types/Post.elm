@@ -7,19 +7,9 @@ import Debug exposing (log)
 
 
 type Message
-    = ConfigResponse (Result Error String)
+    = ConfigResponse (Result Error (List String))
     | PostResponse (Result Error Post)
-    | CheckForPost
-
-
-type PostState
-    = Loading PostType
-    | Loaded Post
-
-
-type PostType
-    = Home
-    | Number Int
+    | NoOp
 
 
 type alias Post =
@@ -35,17 +25,15 @@ type Paragraph
     | Image String
 
 
-type alias Model =
-    { post : PostState
-    , postTitles : List String
-    }
+type Model
+    = NoTitles (Maybe Int)
+    | HaveTitles (List String) (Maybe Int)
+    | HavePost (List String) Post
 
 
 empty : Model
 empty =
-    { post = Loading Home
-    , postTitles = []
-    }
+    NoTitles Nothing
 
 
 error : Post

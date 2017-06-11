@@ -1,64 +1,76 @@
 module Update.Post exposing (..)
 
 import Http
-import Request.Post as Request
-import Types.Post as Post
-    exposing
-        ( Model
-        , Message(..)
-        , PostType(..)
-        , PostState(..)
-        )
+import Request.Post as Post
+import Types.Post exposing (Model(..), Post, Message(..))
 
 
 update : Message -> Model -> ( Model, Cmd Message )
 update message model =
+    case model of
+        NoTitles maybePostNumber ->
+            updateNoTitles message maybePostNumber
+
+        HaveTitles titles maybePostNumber ->
+            updateHaveTitles message titles maybePostNumber
+
+        HavePost titles post ->
+            updateHavePost message titles post
+
+
+updateHavePost : Message -> List String -> Post -> ( Model, Cmd Message )
+updateHavePost message titles post =
     case message of
-        ConfigResponse (Ok str) ->
-            { model
-                | postTitles =
-                    String.split "\n" str
-            }
-                |> update CheckForPost
+        ConfigResponse (Ok newTitles) ->
+            (HavePost newTitles post) ! []
 
-        ConfigResponse (Err err) ->
-            model ! []
+        PostResponse (Ok newPost) ->
+            (HavePost titles newPost) ! []
 
-        PostResponse (Ok post) ->
-            { model
-                | post = Loaded post
-            }
-                ! []
-
-        PostResponse (Err err) ->
-            { model
-                | post =
-                    Loaded Post.error
-            }
-                ! []
-
-        CheckForPost ->
-            case model.post of
-                Loaded _ ->
-                    model ! []
-
-                Loading type_ ->
-                    load type_ model
+        _ ->
+            (HavePost titles post) ! []
 
 
-load : PostType -> Model -> ( Model, Cmd Message )
-load type_ model =
-    loadWhich type_ model
-        |> Request.get
-        |> Http.send PostResponse
-        |> (,) model
+updateHaveTitles : Message -> List String -> Maybe Int -> ( Model, Cmd Message )
+updateHaveTitles message titles maybePostNumber =
+    let
+        postNumber =
+            case maybePostNumber of
+                Nothing ->
+                    List.length titles - 1
+
+                Just number ->
+                    number
+
+        getPost =
+            Http.send PostResponse (Post.get postNumber)
+    in
+        case message of
+            ConfigResponse (Ok newTitles) ->
+                (HaveTitles newTitles maybePostNumber) ! [ getPost ]
+
+            PostResponse (Ok post) ->
+                (HavePost titles post) ! []
+
+            _ ->
+                (HaveTitles titles maybePostNumber) ! [ getPost ]
 
 
-loadWhich : PostType -> Model -> Int
-loadWhich type_ model =
-    case type_ of
-        Home ->
-            List.length model.postTitles - 1
+updateNoTitles : Message -> Maybe Int -> ( Model, Cmd Message )
+updateNoTitles message maybePostNumber =
+    case message of
+        ConfigResponse (Ok titles) ->
+            let
+                postNumber =
+                    case maybePostNumber of
+                        Nothing ->
+                            List.length titles - 1
 
-        Number int ->
-            int
+                        Just number ->
+                            number
+            in
+                (HaveTitles titles maybePostNumber)
+                    ! [ Http.send PostResponse (Post.get postNumber) ]
+
+        _ ->
+            (NoTitles maybePostNumber) ! []
