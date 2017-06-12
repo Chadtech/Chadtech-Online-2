@@ -95,10 +95,6 @@ buttonAttributes withinRange route =
         [ class "archive-button nulled" ]
 
 
-
--- POST
-
-
 viewTitles : List String -> List (Html Message)
 viewTitles strings =
     List.indexedMap
@@ -111,11 +107,15 @@ viewTitle length postNumber title =
     a
         [ classList
             [ "title-listing" := True
-            , "odd" := ((postNumber % 2) == 0)
+            , "even" := ((postNumber % 2) == 0)
             ]
         , href (Route.Post (length - postNumber))
         ]
         [ text title ]
+
+
+
+-- POST
 
 
 viewBody : Post -> List (Html Message)
@@ -127,7 +127,7 @@ header : Post -> List (Html Message)
 header { title, date } =
     [ titleView title
     , div
-        [ class "post-section odd" ]
+        [ class "post-section" ]
         [ p [] [ text date ] ]
     ]
 
@@ -135,7 +135,7 @@ header { title, date } =
 titleView : String -> Html Message
 titleView content =
     div
-        [ class "post-section title" ]
+        [ class "post-section title even" ]
         [ p [] [ text content ] ]
 
 
@@ -146,7 +146,7 @@ postSection i paragraph =
             div
                 [ classList
                     [ "post-section" := True
-                    , "odd" := ((i % 2) == 0)
+                    , "even" := ((i % 2) == 0)
                     , "logic" := True
                     ]
                 ]
@@ -156,7 +156,7 @@ postSection i paragraph =
             div
                 [ classList
                     [ "post-section" := True
-                    , "odd" := ((i % 2) == 0)
+                    , "even" := ((i % 2) == 0)
                     ]
                 ]
                 (postSectionHelp i strings)
