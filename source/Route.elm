@@ -2,13 +2,11 @@ module Route exposing (..)
 
 import UrlParser as Url exposing (parseHash, s, int, (</>), oneOf, Parser)
 import Types.Route as Route exposing (Route)
-import Types.Message exposing (Message(..))
 import Types.Model as Model
 import Types.Post as Post exposing (empty, Model(..))
 import Navigation exposing (Location, modifyUrl)
 import Html.Attributes as Attributes
 import Html exposing (Attribute)
-import Update.Post as PostUpdate
 
 
 route : Parser (Route -> a) a
@@ -30,9 +28,6 @@ set maybeRoute model =
 
         Just (Route.Post number) ->
             goToPost number model
-
-        Just (Route.Archive) ->
-            model
 
         _ ->
             model
@@ -84,12 +79,6 @@ routeToString route =
 
                 Route.Post int ->
                     [ "#/post", toString int ]
-
-                Route.Archive ->
-                    [ "#/archive" ]
-
-                Route.Resume ->
-                    [ "#/resume" ]
 
                 Route.ChadtechOnline0 ->
                     [ "http://chadtech.github.io/" ]

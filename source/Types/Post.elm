@@ -1,6 +1,6 @@
 module Types.Post exposing (..)
 
-import Json.Decode.Pipeline exposing (decode, required, hardcoded)
+import Json.Decode.Pipeline exposing (decode, required, optional, hardcoded)
 import Json.Decode as Decode exposing (Decoder, andThen, succeed, fail)
 import Http exposing (Error)
 import Debug exposing (log)
@@ -16,6 +16,7 @@ type alias Post =
     { title : String
     , date : String
     , body : List Paragraph
+    , number : Int
     }
 
 
@@ -43,6 +44,7 @@ error =
     , body =
         [ Normal [ "Error loading the post" ]
         ]
+    , number = 0
     }
 
 
@@ -50,12 +52,13 @@ error =
 -- DECODER
 
 
-decoder : Decoder Post
-decoder =
+decoder : Int -> Decoder Post
+decoder number =
     decode Post
         |> required "title" Decode.string
         |> required "date" Decode.string
         |> required "body" (Decode.list paragraphDecoder)
+        |> hardcoded number
 
 
 paragraphDecoder : Decoder Paragraph

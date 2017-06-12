@@ -15,8 +15,6 @@ view currentPage =
     div
         [ class "nav-bar" ]
         [ item "Blog" currentPage Home
-        , item "Resume" currentPage Resume
-        , item "Archive" currentPage Archive
         , item "Chadtech Online 0" currentPage ChadtechOnline0
         , item "Twitter" currentPage Twitter
         , item "Github" currentPage Github

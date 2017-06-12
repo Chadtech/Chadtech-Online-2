@@ -17,7 +17,7 @@ get : Int -> Request Post
 get postNumber =
     Http.get
         (postRoute <| toString postNumber)
-        Post.decoder
+        (Post.decoder postNumber)
 
 
 postRoute : String -> String

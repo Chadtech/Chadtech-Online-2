@@ -1,4 +1,4 @@
-module Main.Init exposing (model, init)
+module Main.Init exposing (init)
 
 import Types.Model exposing (Model(..))
 import Types.Message exposing (Message(..))
@@ -9,9 +9,8 @@ import Route
 
 init : Location -> ( Model, Cmd Message )
 init location =
-    ( Route.set (Route.fromLocation location) model, Cmd.none )
-
-
-model : Model
-model =
-    Blank
+    let
+        model =
+            Route.set (Route.fromLocation location) Blank
+    in
+        ( model, Config.cmd )

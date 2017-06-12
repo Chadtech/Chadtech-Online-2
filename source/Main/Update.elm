@@ -41,7 +41,7 @@ setRoute route model =
                     cmds =
                         [ Cmd.map PostMessage postCmd ]
                 in
-                    Post newState ! cmds
+                    (Post newState) ! cmds
 
             _ ->
                 ( newModel, Cmd.none )
